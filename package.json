@@ -4,13 +4,14 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
-    "start:prod": "cross-env NODE_ENV=production nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "\"ndb\" server.js"
   },
   "author": "Abiola",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^5.13.23",
@@ -29,6 +30,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "ndb": "^1.1.5",
-    "prettier": "^3.5.0"
+    "prettier": "^3.5.0",
+    "tailwindcss": "^4.1.4"
   }
 }
