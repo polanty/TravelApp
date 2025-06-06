@@ -21,6 +21,13 @@ const handleValidatorErrDB = (err) => {
   return new AppError(message, 400);
 };
 
+//Json error validation
+const handleJsonValidationError = (err) =>
+  new AppError('Invalid token. Please log in again!', 401);
+
+//Token expired error handler
+const handleTokenExpirationError = (err) => new AppError('Invalid token', 401);
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -66,6 +73,13 @@ module.exports = (err, req, res, next) => {
     //Validator error coming from wrong values as defined in the Model
     if (error.name === 'ValidationError') error = handleValidatorErrDB(error);
 
+    //Json validation error
+    if (error.name === 'JsonWebTokenError')
+      error = handleJsonValidationError(error);
+
+    //expired token handling error
+    if (error.name === 'TokenExpiredError')
+      error = handleTokenExpirationError(error);
     sendErrorProd(error, res);
   }
 };

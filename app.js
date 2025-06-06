@@ -19,6 +19,7 @@ app.use(express.static(`${__dirname}/p  ublic`));
 
 app.use((req, res, next) => {
   req.requestedTime = new Date().toISOString();
+  // console.log(req.headers);
 
   next();
 });

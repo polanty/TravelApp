@@ -15,11 +15,16 @@ const {
   aliasTopTours,
 } = tourController;
 
+const authenticationController = require('../controllers/authenticationController');
+
+//Destructure protect from auth controller
+const { protect } = authenticationController;
+
 const router = express.Router();
 
 // router.param('id', checkID);
 
-router.route('/').get(getAllTours).post(createTour);
+router.route('/').get(protect, getAllTours).post(createTour);
 
 //stattistic Route
 router.route('/tour-stats').get(getTourStat);
