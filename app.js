@@ -14,8 +14,8 @@ if (process.env.NODE_ENV === 'development') {
 //console.log(process.env);
 
 // Middle wares
-app.use(express.json());
-app.use(express.static(`${__dirname}/p  ublic`));
+app.use(express.json()); // without this code, the Json function from the Postman will not work
+app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
   req.requestedTime = new Date().toISOString();

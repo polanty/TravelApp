@@ -18,7 +18,7 @@ const {
 const authenticationController = require('../controllers/authenticationController');
 
 //Destructure protect from auth controller
-const { protect } = authenticationController;
+const { protect, restrictTo } = authenticationController;
 
 const router = express.Router();
 
@@ -35,6 +35,10 @@ router.route('/monthly-plan/:year').get(getMonthlyPlan);
 //Top 5 rated tours
 router.route('/top-5-tours').get(aliasTopTours, getAllTours);
 
-router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+router
+  .route('/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
 
 module.exports = router;
