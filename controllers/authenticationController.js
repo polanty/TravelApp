@@ -12,6 +12,18 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  res.status(statusCode).json({
+    status: 'sucess',
+    token: token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -23,15 +35,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   //Log this user in immediately they sign up
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: 'sucess',
-    token: token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -50,12 +54,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   //3) if everything is okay, send token to client
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    token: token,
-  });
+  createSendToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -179,7 +178,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetExpires: { $gt: Date.now() },
   });
   if (!user) {
-    return next(new AppError('This password reset url does not exist', 400));
+    return next(new AppError('This token is invalid or has expired', 400));
   }
 
   user.password = req.body.password;
@@ -189,16 +188,32 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   //3) Update changedPasswordAt property for the user
-  // return res.status(200).json({
-  //   message: 'sucess',
-  //   user: user,
-  // });
+  // Already implemented this with the Middle ware in the user model
 
   //4) Log the user in, send
-  const token = signToken(user._id);
+  createSendToken(user, 200, res);
+});
 
-  res.status(200).json({
-    status: 'success',
-    token: token,
-  });
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) Get user from collection
+  const user = await User.findOne({ email: req.body.email }).select(
+    '+password',
+  );
+
+  // 2) Check if posted current password is correct
+  if (
+    !user ||
+    !(await user.correctPassword(req.body.passwordCurrent, user.password))
+  ) {
+    return next(new AppError('Incorrect email or password!', 401));
+  }
+
+  // 3) if so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.confirmPassword;
+  await user.save(); // any function other than save will not run the validators
+  //so it is advisable to always use save()
+
+  // 4) Log user in, send JWT
+  createSendToken(user, 200, res);
 });
