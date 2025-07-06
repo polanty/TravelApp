@@ -74,7 +74,7 @@ userSchema.pre('save', async function (next) {
 userSchema.pre('save', async function (next) {
   //the isModified function comes from mongoose
   //This mean the function will only run when the user has just been created and the password is not modified
-  if (!this.isModified('password') || this.isNew()) return next();
+  if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
 
