@@ -100,7 +100,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: [{ type: mongoose.Schema.ObjectsId, ref: 'User' }],
+    //guides: [{ type: mongoose.Schema.ObjectsId, ref: 'User' }],
   },
 
   {
