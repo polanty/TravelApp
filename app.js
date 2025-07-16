@@ -6,6 +6,7 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 //Security packages
 const helmet = require('helmet');
@@ -71,6 +72,9 @@ app.use('/api/v1/tours', tourRouter);
 
 //Routes to the user aspects
 app.use('/api/v1/users', userRouter);
+
+//Routes to the Reviews
+app.use('/api/v1/reviews', reviewRouter);
 
 //Handles all unhandled routes
 app.all('*', (req, res, next) => {

@@ -100,7 +100,7 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    //guides: [{ type: mongoose.Schema.ObjectsId, ref: 'User' }],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
 
   {
@@ -111,6 +111,15 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+
+  next();
 });
 
 //MONGOOSE DOCUMENT middleware runs before .save() and .create()
