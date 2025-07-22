@@ -30,13 +30,17 @@ const reviewModel = new mongoose.Schema(
 );
 
 reviewModel.pre(/^find/, function (next) {
+  // this.populate({
+  //   path: 'userRef',
+  //   select: '-__v -passwordResetToken -passwordResetExpires',
+  // });
+
+  // this.populate('tourRef');
+
   this.populate({
     path: 'userRef',
     select: '-__v -passwordResetToken -passwordResetExpires',
   });
-
-  this.populate('tourRef');
-
   next();
 });
 

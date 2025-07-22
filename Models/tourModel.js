@@ -113,6 +113,14 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+//Mongoose method to populate any Object that references a tour model
+//Mongoose behid the scene will populate the model with the reference
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tourRef',
+  localField: '_id',
+});
+
 tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'guides',

@@ -59,7 +59,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
   const tourID = req.params.id;
 
   //finding one from the DB by the parameter
-  const tour = await Tour.findById(tourID);
+  const tour = await Tour.findById(tourID).populate('reviews');
 
   if (!tour) {
     return next(new AppError('This Tour does not Exists', 404));
