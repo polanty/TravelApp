@@ -2,6 +2,8 @@
 //This is the tour route
 const express = require('express');
 const tourController = require('../controllers/tourController');
+// const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const {
   getAllTours,
@@ -14,6 +16,8 @@ const {
   // getTopTours, //Second option to get the top 5 tours
   aliasTopTours,
 } = tourController;
+
+// const { createReview } = reviewController;
 
 const authenticationController = require('../controllers/authenticationController');
 
@@ -39,6 +43,18 @@ router
   .route('/:id')
   .get(getTour)
   .patch(updateTour)
-  .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
+  .delete(protect, restrictTo('admin', 'guide'), deleteTour);
+
+//POST /tour/23445/reviews - Create a review
+//GET /tour/234534/reviews - get all the reviews associated with that tour
+//GET /tour/234534/reviews/23456 - get a particular review for a single tour
+
+//First implementation , but this is not best practice
+// router
+//   .route('/:tourId/reviews')
+//   .post(protect, restrictTo('user'), createReview);
+
+//Importing the review Router instead
+router.use('/:tourId/reviews', reviewRouter);
 
 module.exports = router;
