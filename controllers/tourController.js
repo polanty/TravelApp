@@ -73,40 +73,10 @@ exports.getTopTours = catchAsync(async (req, res, next) => {
 });
 
 //Getting a single tour :id stands for parameter
-
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'status',
-    data: {
-      tour: newTour,
-    },
-  });
-});
+exports.createTour = factory.createDocument(Tour);
 
 //Sending data to a single tour
-exports.updateTour = catchAsync(async (req, res, next) => {
-  //read one single tour from data base
-  const tourID = req.params.id;
-
-  //finding one from the DB by the parameter
-  const tour = await Tour.findByIdAndUpdate(tourID, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!tour) {
-    return next(new AppError('This Tour does not Exists', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: tour,
-    },
-  });
-});
+exports.updateTour = factory.UpdateDocument(Tour);
 
 // exports.deleteTour = catchAsync(async (req, res, next) => {
 //   //read one single tour from data base

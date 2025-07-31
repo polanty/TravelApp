@@ -87,11 +87,14 @@ exports.getUser = (req, res) => {
   });
 };
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
+//Do Not Use when I want to run anything that updates the Password
+//Cause FindbyIdandUpdate do not run all the save MIDDLEWARE
+exports.updateUser = factory.UpdateDocument(User);
+// (req, res) => {
+//   res.status(500).json({
+//     status: 'error',
+//     message: 'This route is not yet defined',
+//   });
+// };
 
 exports.deleteUser = factory.deleteOne(User);
