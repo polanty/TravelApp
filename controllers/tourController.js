@@ -1,6 +1,6 @@
 const Tour = require('../Models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
+// const APIFeatures = require('../utils/apiFeatures');
+// const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
@@ -12,48 +12,10 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  //read all tours from data base
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitting()
-    .pagination();
-
-  //Execute the query
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    date: req.requestedTime,
-    results: tours.length,
-    data: {
-      tours: tours,
-    },
-  });
-});
+exports.getAllTours = factory.getAllDocuments(Tour);
 
 //Getting all tours
-
-exports.getTour = catchAsync(async (req, res, next) => {
-  // console.log(process.env);
-  //read one single tour from data base
-  const tourID = req.params.id;
-
-  //finding one from the DB by the parameter
-  const tour = await Tour.findById(tourID).populate('reviews');
-
-  if (!tour) {
-    return next(new AppError('This Tour does not Exists', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: tour,
-    },
-  });
-});
+exports.getTour = factory.getOneDocument(Tour, { path: 'reviews' });
 
 //Get the top 5 tours// I used the second option listed uptop to prefil
 exports.getTopTours = catchAsync(async (req, res, next) => {
@@ -174,3 +136,23 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// catchAsync(async (req, res, next) => {
+//   // console.log(process.env);
+//   //read one single tour from data base
+//   const tourID = req.params.id;
+
+//   //finding one from the DB by the parameter
+//   const tour = await Tour.findById(tourID).populate('reviews');
+
+//   if (!tour) {
+//     return next(new AppError('This Tour does not Exists', 404));
+//   }
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour: tour,
+//     },
+//   });
+// });

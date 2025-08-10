@@ -18,6 +18,12 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+
+  next();
+};
+
 // Users Route
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   //Execute the query
@@ -80,12 +86,7 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
+exports.getUser = factory.getOneDocument(User);
 
 //Do Not Use when I want to run anything that updates the Password
 //Cause FindbyIdandUpdate do not run all the save MIDDLEWARE

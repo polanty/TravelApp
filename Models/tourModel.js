@@ -109,6 +109,11 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+//Declaring an index for efficient search as this could optimize searchfunctionality.
+//We would usually do this on objects that we know might be requested for the most by our app users
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });

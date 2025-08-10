@@ -8,11 +8,12 @@ const router = express.Router();
 const {
   getAllUsers,
   createUser,
-  getUser,
   updateUser,
   deleteUser,
   deleteMe,
   updateMe,
+  getMe,
+  getUser,
 } = //updateMe
   userController;
 
@@ -31,20 +32,27 @@ router.post('/signup', signup);
 //Login route
 router.post('/login', login);
 
+router.get('/me', protect, getMe, getUser);
+
 //Forget password route
 router.post('/forgotPassword', forgotPassword);
 
 //reset password route
 router.patch('/resetPassword/:token', resetPassword);
 
+//Used to protect all the middle ware that comes after this middle ware to require all users to be logged in
+router.use(protect);
+
 //reset password route
-router.patch('/updatePassword', protect, updatePassword);
+router.patch('/updatePassword', updatePassword);
 
 //Update user Information
-router.patch('/updateMe', protect, updateMe);
+router.patch('/updateMe', updateMe);
 
 //Delete User Information
-router.delete('/deleteMe', protect, deleteMe);
+router.delete('/deleteMe', deleteMe);
+
+router.use(userAuthentication.restrictTo('admin'));
 
 router.route('/').get(getAllUsers).post(createUser);
 

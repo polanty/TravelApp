@@ -28,13 +28,18 @@ const router = express.Router();
 
 // router.param('id', checkID);
 
-router.route('/').get(protect, getAllTours).post(createTour);
+router
+  .route('/')
+  .get(getAllTours)
+  .post(protect, restrictTo('admin', 'lead-guide'), createTour);
 
 //stattistic Route
 router.route('/tour-stats').get(getTourStat);
 
 //Monthly Tours Route
-router.route('/monthly-plan/:year').get(getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(protect, restrictTo('admin', 'lead-guide'), getMonthlyPlan);
 
 //Top 5 rated tours
 router.route('/top-5-tours').get(aliasTopTours, getAllTours);
@@ -42,8 +47,8 @@ router.route('/top-5-tours').get(aliasTopTours, getAllTours);
 router
   .route('/:id')
   .get(getTour)
-  .patch(updateTour)
-  .delete(protect, restrictTo('admin', 'guide'), deleteTour);
+  .patch(protect, restrictTo('admin', 'lead-guide'), updateTour)
+  .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
 
 //POST /tour/23445/reviews - Create a review
 //GET /tour/234534/reviews - get all the reviews associated with that tour
