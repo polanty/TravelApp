@@ -119,7 +119,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 //Mongoose method to populate any Object that references a tour model
-//Mongoose behid the scene will populate the model with the reference
+//Mongoose behind the scene will populate the model with the reference
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tourRef',

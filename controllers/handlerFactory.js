@@ -77,7 +77,8 @@ exports.getAllDocuments = (Model) =>
   catchAsync(async (req, res, next) => {
     //Allow for nested get reviews on Tour
     let filter = {};
-    if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.params.tourId) filter = { tourRef: req.params.tourId };
+    console.log(filter);
 
     //read all tours from data base
     const features = new APIFeatures(Model.find(filter), req.query)
@@ -88,6 +89,8 @@ exports.getAllDocuments = (Model) =>
 
     //Execute the query
     const doc = await features.query;
+
+    console.log(doc);
 
     res.status(200).json({
       status: 'success',
