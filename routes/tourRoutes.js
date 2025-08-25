@@ -15,6 +15,7 @@ const {
   getMonthlyPlan,
   // getTopTours, //Second option to get the top 5 tours
   aliasTopTours,
+  getToursWithin,
 } = tourController;
 
 // const { createReview } = reviewController;
@@ -43,6 +44,13 @@ router
 
 //Top 5 rated tours
 router.route('/top-5-tours').get(aliasTopTours, getAllTours);
+
+//Location route
+//distance is the distance from the latlng which will be the current position of the user
+//unit will represent the search distance
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(getToursWithin);
 
 router
   .route('/:id')
