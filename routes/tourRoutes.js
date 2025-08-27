@@ -16,6 +16,7 @@ const {
   // getTopTours, //Second option to get the top 5 tours
   aliasTopTours,
   getToursWithin,
+  getAllDistance,
 } = tourController;
 
 // const { createReview } = reviewController;
@@ -51,6 +52,8 @@ router.route('/top-5-tours').get(aliasTopTours, getAllTours);
 router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
   .get(getToursWithin);
+
+router.route('/distances/:latlng/unit/:unit').get(getAllDistance);
 
 router
   .route('/:id')

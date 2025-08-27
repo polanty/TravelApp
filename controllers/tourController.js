@@ -186,3 +186,49 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getAllDistance = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+
+  const [lat, lng] = latlng.split(',');
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please Provide latitude and Longitude in the format lat,lng.',
+        400,
+      ),
+    );
+  }
+
+  // const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+  const distances = await Tour.aggregate([
+    {
+      //This is the only value geospatial aggregation pipeline receives
+      //It will only work if you have at least one index(in the model already) referecing a geopatial value
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
+    },
+  });
+});
