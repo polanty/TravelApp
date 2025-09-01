@@ -75,7 +75,10 @@ app.use((req, res, next) => {
 
 //Routes for the View Rendered by pugs
 app.get('/', (req, res) => {
-  res.status(200).render('base');
+  res.status(200).render('base', {
+    tour: 'The Tour',
+    user: 'John doe',
+  });
 });
 
 //Routes to the tour aspects
