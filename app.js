@@ -8,6 +8,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewRoute = require('./routes/viewRoutes');
 
 //Security packages
 const helmet = require('helmet');
@@ -73,13 +74,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//Routes for the View Rendered by pugs
-app.get('/', (req, res) => {
-  res.status(200).render('base', {
-    tour: 'The Tour',
-    user: 'John doe',
-  });
-});
+app.use('/', viewRoute);
 
 //Routes to the tour aspects
 app.use('/api/v1/tours', tourRouter);
