@@ -3,11 +3,11 @@ const viewController = require('../controllers/viewsController');
 
 const router = express.Router();
 
-const { getTourPage, getOverview } = viewController;
+const { getTour, getOverview } = viewController;
 
 //Routes for the View Rendered by pugs
 router.get('/', getOverview);
 
-router.get('/tour', getTourPage);
+router.get('/tour/:name', getTour);
 
 module.exports = router;

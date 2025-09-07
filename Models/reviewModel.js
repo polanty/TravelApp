@@ -7,7 +7,7 @@ const reviewModel = new mongoose.Schema(
       type: String,
       required: [true, 'A review must have a Ratings'],
     },
-    ratings: {
+    rating: {
       type: Number,
       min: 1,
       max: 5,
@@ -62,7 +62,7 @@ reviewModel.statics.calcAverageRatings = async function (tourId) {
       $group: {
         _id: '$tourRef',
         nRating: { $sum: 1 },
-        avgRatings: { $avg: '$ratings' },
+        avgRatings: { $avg: '$rating' },
       },
     },
   ]);
@@ -90,7 +90,7 @@ reviewModel.post('save', function () {
 
 //Function to update the ratings based on an Update and delete call on a Tour
 //Under where i stated below functionality, this immediate middle ware passes this.r straight to the next middle ware
-//I have to always remeber , excel is build on middleware
+//I have to always remeber , express is build on middleware
 reviewModel.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findOne();
 

@@ -14,9 +14,19 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getTourPage = (req, res) => {
-  res.status(200).render('base', {
-    tour: 'The Tour',
-    user: 'John doe',
+exports.getTour = catchAsync(async (req, res) => {
+  // 1) Get the data, for the requested tour (including reviews and guides)
+  // 2) Build template
+  // 3) Render template to user
+  const tour = await Tour.findOne({ name: req.params.name }).populate({
+    path: 'reviews',
+    fields: 'review rating userRef',
   });
-};
+
+  console.log(tour);
+  // console.log(req.params.name);
+
+  res.status(200).render('tour', {
+    tour: tour,
+  });
+});
