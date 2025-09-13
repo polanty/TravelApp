@@ -23,7 +23,51 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // Set Security HTTP headers
-app.use(helmet());
+//app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        'default-src': ["'self'"],
+
+        // ✅ Allow Mapbox scripts
+        'script-src': ["'self'", 'https://api.mapbox.com'],
+
+        // ✅ Allow Mapbox & Google Fonts styles
+        'style-src': [
+          "'self'",
+          "'unsafe-inline'",
+          'https://api.mapbox.com',
+          'https://fonts.googleapis.com',
+        ],
+
+        // ✅ Allow Mapbox fonts
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+
+        // ✅ Allow images (local, base64, Mapbox)
+        'img-src': [
+          "'self'",
+          'data:',
+          'https://api.mapbox.com',
+          'https://events.mapbox.com',
+        ],
+
+        // ✅ Allow API calls to Mapbox
+        'connect-src': [
+          "'self'",
+          'https://api.mapbox.com',
+          'https://events.mapbox.com',
+        ],
+
+        // ✅ Allow workers created from blob URLs
+        'worker-src': ["'self'", 'blob:'],
+
+        // (optional) if you use inline mapbox styles as JSON
+        'object-src': ["'none'"],
+      },
+    },
+  }),
+);
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
