@@ -15,6 +15,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -31,7 +32,16 @@ app.use(
         'default-src': ["'self'"],
 
         // ✅ Allow Mapbox scripts
-        'script-src': ["'self'", 'https://api.mapbox.com'],
+        'script-src': [
+          "'self'",
+          'http://127.0.0.1:8000',
+          'http://localhost:8000',
+          'https://api.mapbox.com',
+          'https://cdnjs.cloudflare.com',
+          'https://cdnjs.cloudflare.com/ajax/',
+          'https://cdnjs.cloudflare.com/ajax/libs/',
+          'https://cdnjs.cloudflare.com/ajax/libs/axios/',
+        ],
 
         // ✅ Allow Mapbox & Google Fonts styles
         'style-src': [
@@ -55,8 +65,14 @@ app.use(
         // ✅ Allow API calls to Mapbox
         'connect-src': [
           "'self'",
+          'http://127.0.0.1:8000',
+          'http://localhost:8000',
           'https://api.mapbox.com',
           'https://events.mapbox.com',
+          'https://cdnjs.cloudflare.com',
+          'https://cdnjs.cloudflare.com/ajax/',
+          'https://cdnjs.cloudflare.com/ajax/libs/',
+          'https://cdnjs.cloudflare.com/ajax/libs/axios/',
         ],
 
         // ✅ Allow workers created from blob URLs
@@ -87,6 +103,9 @@ app.use('/api', limiter);
 // Middle wares
 app.use(express.json({ limit: '10kb' })); // without this code, the Json function from the Postman will not work
 
+//Cookie parser
+app.use(cookieParser());
+
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
@@ -113,7 +132,7 @@ app.use(express.static(path.join(__dirname, 'public'))); //Serving static files
 //Set time on the request object which is avaialaible on all the request
 app.use((req, res, next) => {
   req.requestedTime = new Date().toISOString();
-  // console.log(req.headers);
+  console.log(req.cookies);
 
   next();
 });
