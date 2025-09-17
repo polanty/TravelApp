@@ -6,10 +6,11 @@ header.header
         img(src="/img/logo-white.png" alt="Natours logo")
 
     nav.nav.nav--user
-        a.nav__el(href="#") My bookings
+      if user
+        a.nav__el.nav__el--logout(href="#") Log out
         a.nav__el(href="#") 
-            img.nav__user-img(src="/img/user.jpg" alt="User photo")
-            span Jonas
-
+            img.nav__user-img(src=`/img/users/${user.photo}` alt="User photo")
+            span= user.name.split(" ")[0]
+      else
         a.nav__el(href='/login') Log in
         a.nav__el.nav__el--cta(href='#') Sign up

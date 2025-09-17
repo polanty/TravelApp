@@ -64,6 +64,8 @@ exports.login = catchAsync(async (req, res, next) => {
   //2) check if the user exists and password is correct
   const user = await User.findOne({ email: email }).select('+password');
 
+  // console.log(user);
+
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password!', 401));
   }
@@ -113,6 +115,36 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Goes straight tothe next middle ware
   req.user = currentUser;
+  next();
+});
+
+//Only for rendered pages and no errors
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    //1) Validate the token by checking if the signature is valid (unaltered against the one in the database)
+    const decoded = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECRET,
+    );
+
+    //2) if verification is successful, check if the user still exists
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) {
+      return next();
+    }
+
+    //4) check if user changed password after the token is issued
+    if (currentUser.changedPasswordsAfter(decoded.iat)) {
+      return next();
+    }
+
+    // THERE IS A LOGGED IN USER
+    res.locals.user = currentUser;
+    return next();
+  }
+
+  //if no current user, function returns next straight away as there is no current user
   next();
 });
 
