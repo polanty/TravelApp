@@ -1,6 +1,9 @@
 /*eslint-disable*/
-const login = async (email, password) => {
-  //   console.log(email, password);
+const axios = require('axios').default;
+const { showAlert } = require('./alerts');
+
+module.exports.login = async (email, password) => {
+  console.log(email, password);
 
   try {
     const res = await axios({
@@ -11,19 +14,23 @@ const login = async (email, password) => {
         password,
       },
     });
-    //http://127.0.0.1:8000
 
-    console.log(res);
+    if (res.data.status === 'success') {
+      showAlert('Logged in successfully!');
+
+      window.setTimeout(() => {
+        location.assign('/');
+      }, 1500);
+    }
+
+    // console.log(res);
+    // console.log('This came from here');
   } catch (error) {
-    console.log(error.response.data);
+    showAlert(
+      'error',
+      error?.response?.data?.message ||
+        error?.message ||
+        'An unexpected error occurred',
+    );
   }
 };
-
-document.querySelector('.form').addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  login(email, password);
-});
