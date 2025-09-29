@@ -1,11 +1,13 @@
 /*eslint-disable*/
-const { login } = require('./login');
+const { login, logout } = require('./login');
 const displayMap = require('./mapbox');
+
 require('@babel/polyfill');
 
 //DOM ELEMENTS
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form');
+const logOutBtn = document.querySelector('.nav__el--logout');
 
 // DELEGATIONS
 if (mapBox) {
@@ -24,3 +26,5 @@ if (loginForm) {
     login(email, password);
   });
 }
+
+if (logOutBtn) logOutBtn.addEventListener('click', logout);

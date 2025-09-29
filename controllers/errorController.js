@@ -28,31 +28,62 @@ const handleJsonValidationError = (err) =>
 //Token expired error handler
 const handleTokenExpirationError = (err) => new AppError('Invalid token', 401);
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
+const sendErrorDev = (err, req, res) => {
+  //API
+  const isApi = req.originalUrl && req.originalUrl.startsWith('/api');
+  if (isApi) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+  //RENDERED WEBSITES
+  console.error('Error 🤢');
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
     message: err.message,
-    stack: err.stack,
   });
 };
 
-const sendErrorProd = (err, res) => {
-  //This Operational error shpuld be sent to the customer while the other error should be sent to developer to identify an arror occured
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-    // Programming or unknown error, we do not want the client seeing this details
-  } else {
+const sendErrorProd = (err, req, res) => {
+  const isApi = req.originalUrl && req.originalUrl.startsWith('/api');
+  if (isApi) {
+    //API
+    //This Operational error shpuld be sent to the customer while the other error should be sent to developer to identify an arror occured
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+      // Programming or unknown error, we do not want the client seeing this details
+    }
     // 1) Log the error
     console.error('Error 🤢');
-    res.status(500).json({
+
+    return res.status(500).json({
       status: 'error',
       message: 'Something went wrong!',
     });
   }
+
+  //RENDERED WEBSITE
+  //This Operational error shpuld be sent to the customer while the other error should be sent to developer to identify an arror occured
+  if (err.isOperational) {
+    return res.status(err.statusCode).render('error', {
+      title: err.status,
+      message: err.message,
+    });
+    // Programming or unknown error, we do not want the client seeing this details
+  }
+  // 1) Log the error
+  console.error('Error 🤢');
+
+  return res.status(500).json({
+    title: 'error',
+    message: 'Please try again later',
+  });
 };
 
 module.exports = (err, req, res, next) => {
@@ -60,9 +91,10 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+    error.message = err.message;
 
     //Cast Hnadler - Incase you pass in an invalid ID
     if (error.name === 'CastError') error = handleCastErrorDB(error);

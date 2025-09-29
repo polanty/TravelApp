@@ -31,7 +31,7 @@ const createSendToken = (user, statusCode, res) => {
   user.password = undefined;
 
   res.status(statusCode).json({
-    status: 'sucess',
+    status: 'success',
     token: token,
     data: {
       user,
@@ -119,33 +119,46 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 //Only for rendered pages and no errors
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    //1) Validate the token by checking if the signature is valid (unaltered against the one in the database)
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET,
-    );
+    try {
+      //1) Validate the token by checking if the signature is valid (unaltered against the one in the database)
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET,
+      );
 
-    //2) if verification is successful, check if the user still exists
-    const currentUser = await User.findById(decoded.id);
+      //2) if verification is successful, check if the user still exists
+      const currentUser = await User.findById(decoded.id);
 
-    if (!currentUser) {
+      if (!currentUser) {
+        return next();
+      }
+
+      //4) check if user changed password after the token is issued
+      if (currentUser.changedPasswordsAfter(decoded.iat)) {
+        return next();
+      }
+
+      // THERE IS A LOGGED IN USER
+      res.locals.user = currentUser;
+      return next();
+    } catch (err) {
+      //if no current user, function returns next straight away as there is no current user
       return next();
     }
-
-    //4) check if user changed password after the token is issued
-    if (currentUser.changedPasswordsAfter(decoded.iat)) {
-      return next();
-    }
-
-    // THERE IS A LOGGED IN USER
-    res.locals.user = currentUser;
-    return next();
   }
 
-  //if no current user, function returns next straight away as there is no current user
   next();
+};
+
+//Log Out route - Implementation is to send a new jwt but with an empty token and a very short expiry date
+exports.logout = catchAsync(async (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
 });
 
 exports.restrictTo =

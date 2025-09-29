@@ -8,11 +8,11 @@ const { isLoggedIn } = authenticationController;
 
 const { getTour, getOverview, getLoginForm } = viewController;
 
-//Routes for the View Rendered by pugs
-router.get('/', getOverview);
-
 //Protect all the routes to only logged in user
 router.use(isLoggedIn);
+
+//Routes for the View Rendered by pugs
+router.get('/', getOverview);
 
 router.get('/tour/:name', getTour);
 

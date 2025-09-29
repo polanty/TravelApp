@@ -24,6 +24,7 @@ const {
   resetPassword,
   updatePassword,
   protect,
+  logout,
 } = userAuthentication;
 
 //sign up route
@@ -31,6 +32,9 @@ router.post('/signup', signup);
 
 //Login route
 router.post('/login', login);
+
+//Logged in user route
+router.get('/logout', logout);
 
 router.get('/me', protect, getMe, getUser);
 
