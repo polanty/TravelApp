@@ -103,6 +103,10 @@ app.use('/api', limiter);
 // Middle wares
 app.use(express.json({ limit: '10kb' })); // without this code, the Json function from the Postman will not work
 
+//Middle ware to allow me to get submit POST request from HTML forms
+//from a URL encoded form
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
 //Cookie parser
 app.use(cookieParser());
 

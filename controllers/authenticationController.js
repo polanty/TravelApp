@@ -115,6 +115,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Goes straight tothe next middle ware
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
