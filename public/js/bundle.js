@@ -13869,8 +13869,8 @@ if (userPasswordForm) {
       return _regenerator().w(function (_context) {
         while (1) switch (_context.n) {
           case 0:
-            e.preventDefault(); // console.log('hello');
-
+            e.preventDefault();
+            document.querySelector('.btn--save-password').textContent = 'Updating...';
             passwordCurrent = document.getElementById('password-current').value;
             password = document.getElementById('password').value;
             passwordConfirm = document.getElementById('password-confirm').value; // updatePassword(passwordCurrent, password, passwordConfirm);
@@ -13883,6 +13883,8 @@ if (userPasswordForm) {
             }, 'password');
 
           case 1:
+            document.querySelector('.btn--save-password').textContent = 'Save password'; //clear the fields
+
             document.getElementById('password-current').value = '';
             document.getElementById('password').value = '';
             document.getElementById('password-confirm').value = '';
