@@ -1,6 +1,10 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const userAuthentication = require('../controllers/authenticationController');
+const multer = require('multer');
+
+//Defines the destination to store the image
+const upload = multer({ dest: 'public/img/users' });
 
 //User Routes
 const router = express.Router();
@@ -51,7 +55,7 @@ router.use(protect);
 router.patch('/updatePassword', updatePassword);
 
 //Update user Information
-router.patch('/updateMe', updateMe);
+router.patch('/updateMe', upload.single('photo'), updateMe);
 
 //Delete User Information
 router.delete('/deleteMe', deleteMe);
