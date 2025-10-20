@@ -4,36 +4,43 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 const multer = require('multer');
+const sharp = require('sharp');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/img/users'):
+    cb(null, 'public/img/users');
   },
   filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1]
+    const ext = file.mimetype.split('/')[1];
 
     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
-
-  }
-})
+  },
+});
 
 const multerFilter = (req, file, cb) => {
-  if (file.minetype.startsWith('image')) {
-    cb(null, true)
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
   } else {
-    cb(new AppError('Not an image! Please upload only images.', 400), false)
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
   }
-}
+};
 
 const upload = multer({
   storage: multerStorage,
-  fileFilter: multerFilter
-})
- 
+  fileFilter: multerFilter,
+});
+
 //Defines the destination to store the image
-const upload = multer({ dest: 'public/img/users' });
- 
-exports.uploadUserPhoto = upload.single('photo')
+// const upload = multer({ dest: 'public/img/users' });
+
+exports.uploadUserPhoto = upload.single('photo');
+
+exports.resizeUserPhoto = (req, res, next) => {
+  if (!req.file) return next();
+
+  //We can use sharp to resize the image and change the format
+  next();
+};
 
 // const users = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`),
@@ -73,7 +80,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
-    return next( 
+    return next(
       new AppError(
         'This route is not for password updates. Please use /updateMyPassword.',
         400,
@@ -83,11 +90,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   //Filter out unwanted variables that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
-  if (req.file) filteredBody.photo = req.file.filename
+  if (req.file) filteredBody.photo = req.file.filename;
 
   // 2) Find the user profile and update accordingly
   // The new param isto have the query return the new object and the validator to validate
-  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, { 
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });

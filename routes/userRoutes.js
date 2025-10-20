@@ -2,7 +2,6 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const userAuthentication = require('../controllers/authenticationController');
 
-
 //User Routes
 const router = express.Router();
 
@@ -15,7 +14,8 @@ const {
   updateMe,
   getMe,
   getUser,
-  uploadUserPhoto
+  uploadUserPhoto,
+  resizeUserPhoto,
 } = //updateMe
   userController;
 
@@ -53,7 +53,7 @@ router.use(protect);
 router.patch('/updatePassword', updatePassword);
 
 //Update user Information
-router.patch('/updateMe', uploadUserPhoto, updateMe);
+router.patch('/updateMe', uploadUserPhoto, resizeUserPhoto, updateMe);
 
 //Delete User Information
 router.delete('/deleteMe', deleteMe);
