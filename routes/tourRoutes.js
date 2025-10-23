@@ -17,6 +17,8 @@ const {
   aliasTopTours,
   getToursWithin,
   getAllDistance,
+  uploadTourImages,
+  resizeTourImages,
 } = tourController;
 
 // const { createReview } = reviewController;
@@ -58,7 +60,13 @@ router.route('/distances/:latlng/unit/:unit').get(getAllDistance);
 router
   .route('/:id')
   .get(getTour)
-  .patch(protect, restrictTo('admin', 'lead-guide'), updateTour)
+  .patch(
+    protect,
+    restrictTo('admin', 'lead-guide'),
+    uploadTourImages,
+    resizeTourImages,
+    updateTour,
+  )
   .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour);
 
 //POST /tour/23445/reviews - Create a review
