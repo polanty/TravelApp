@@ -105,7 +105,7 @@ module.exports = (err, req, res, next) => {
     //Validator error coming from wrong values as defined in the Model
     if (error.name === 'ValidationError') error = handleValidatorErrDB(error);
 
-    //Json validation error
+    //Json validation
     if (error.name === 'JsonWebTokenError')
       error = handleJsonValidationError(error);
 
