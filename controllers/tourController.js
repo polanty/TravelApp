@@ -30,24 +30,30 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
   if (!req.files.imageCover || !req.files.images) return next();
 
   // 1) Resize imageCover
-  req.files.imageCover[0].filename = `tour-${req.params.id}-${Date.now()}.jpeg`;
+  req.files.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
 
   await sharp(req.files.imageCover[0].buffer)
-    .resize(500, 500)
+    .resize(2000, 1333)
     .toFormat('jpeg')
     .jpeg({ quality: 90 })
-    .toFile(`public/img/tours/${req.files.imageCover[0].filename}`);
+    .toFile(`public/img/tours/${req.files.imageCover}`);
 
   // 2) Resize images
-  req.files.images.forEach(async (file, i) => {
-    file.filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+  req.body.images = [];
 
-    await sharp(file.buffer)
-      .resize(500, 500)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/tours/${file.filename}`);
-  });
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+      await sharp(req.files.images[i].buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${file.filename}`);
+
+      req.body.images.push(filename);
+    }),
+  );
 
   next();
 });

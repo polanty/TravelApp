@@ -38,12 +38,13 @@ if (userDataForm) {
     e.preventDefault();
     // console.log('hello');
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    // const photo = document.getElementById('photo').files[0];
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
 
     // updateData(name, email);
-    updateSettings({ name, email }, 'data');
+    updateSettings(form, 'data');
   });
 }
 
