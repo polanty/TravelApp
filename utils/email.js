@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const pug = require('pug');
-const htmlToText = require('html-to-text');
+const { htmlToText } = require('html-to-text');
 
 module.exports = class Email {
   constructor(user, url) {
@@ -12,8 +12,14 @@ module.exports = class Email {
 
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
-      //SendGrid
-      return 1;
+      // TODO: return a real production transport (e.g. SendGrid)
+      return nodemailer.createTransport({
+        service: 'SendGrid',
+        auth: {
+          user: process.env.SENDGRID_USERNAME,
+          pass: process.env.SENDGRID_PASSWORD,
+        },
+      });
     }
 
     return nodemailer.createTransport({
@@ -24,47 +30,41 @@ module.exports = class Email {
         pass: process.env.EMAIL_PASSWORD,
       },
       tls: {
-        // ⚠️ Accept self-signed certs — for dev only!
         rejectUnauthorized: false,
       },
     });
   }
 
-  send(template, subject) {
-    //1) Create a transporter
-    const html = pug.renderFile(
-      `${__dirname}/../views/emails/${template}.pug`,
-      {
-        firstName: this.firstName,
-        url: this.url,
-        subject,
-      },
-    );
+  async send(template, subject) {
+    // 1) Render HTML based on pug template name (e.g. 'welcome' -> views/email/welcome.pug)
+    const html = pug.renderFile(`${__dirname}/../views/email/${template}.pug`, {
+      firstName: this.firstName,
+      url: this.url,
+      subject,
+    });
 
-    //2) define email options
+    // 2) Email options
     const mailOptions = {
       from: this.from,
       to: this.to,
-      subject: subject,
-      html: html,
-      text: htmlToText.fromString(html),
+      subject,
+      html,
+      text: htmlToText(html),
     };
 
-    //Create Transport and send email
-    return this.newTransport().sendMail(mailOptions);
+    // 3) Create transport and send
+    await this.newTransport().sendMail(mailOptions);
   }
 
+  // Use the pug template name as first arg
   async sendWelcome() {
-    await this.send(
-      'Welcome to the Natours Family!',
-      `Hello ${this.firstName},\n Welcome to the Natours family! We are excited to have you on board.\n If you have any questions, feel free to reach out to us at any time.\n Best regards,\n The Natours Team`,
-    );
+    await this.send('welcome', 'Welcome to the Natours Family!');
   }
 
   async sendPasswordReset() {
     await this.send(
+      'passwordReset',
       'Your password reset token (valid for only 10 minutes)',
-      `Hello ${this.firstName},\n You requested a password reset. Please click on the following link to reset your password:\n ${this.url}\n If you did not request this, please ignore this email.\n Best regards,\n The Natours Team`,
     );
   }
 };
