@@ -36,6 +36,7 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "baseline-browser-mapping": "^2.8.30",
     "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
