@@ -24,63 +24,46 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-// Set Security HTTP headers
-//app.use(helmet());
+// Set Security HTTP header
+
+// ...existing code...
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         'default-src': ["'self'"],
-
-        // ✅ Allow Mapbox scripts
         'script-src': [
           "'self'",
           'http://127.0.0.1:8000',
           'http://localhost:8000',
           'https://api.mapbox.com',
           'https://cdnjs.cloudflare.com',
-          'https://cdnjs.cloudflare.com/ajax/',
-          'https://cdnjs.cloudflare.com/ajax/libs/',
-          'https://cdnjs.cloudflare.com/ajax/libs/axios/',
+          'https://js.stripe.com', // allow Stripe.js
         ],
-
-        // ✅ Allow Mapbox & Google Fonts styles
         'style-src': [
           "'self'",
           "'unsafe-inline'",
           'https://api.mapbox.com',
           'https://fonts.googleapis.com',
         ],
-
-        // ✅ Allow Mapbox fonts
         'font-src': ["'self'", 'https://fonts.gstatic.com'],
-
-        // ✅ Allow images (local, base64, Mapbox)
         'img-src': [
           "'self'",
           'data:',
           'https://api.mapbox.com',
           'https://events.mapbox.com',
         ],
-
-        // ✅ Allow API calls to Mapbox
         'connect-src': [
           "'self'",
           'http://127.0.0.1:8000',
           'http://localhost:8000',
           'https://api.mapbox.com',
           'https://events.mapbox.com',
-          'https://cdnjs.cloudflare.com',
-          'https://cdnjs.cloudflare.com/ajax/',
-          'https://cdnjs.cloudflare.com/ajax/libs/',
-          'https://cdnjs.cloudflare.com/ajax/libs/axios/',
+          'https://js.stripe.com', // allow Stripe network calls
         ],
-
-        // ✅ Allow workers created from blob URLs
         'worker-src': ["'self'", 'blob:'],
-
-        // (optional) if you use inline mapbox styles as JSON
         'object-src': ["'none'"],
+        'frame-src': ["'self'", 'https://js.stripe.com'], // allow Stripe checkout frames
       },
     },
   }),

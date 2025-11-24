@@ -3,6 +3,7 @@ const { login, logout } = require('./login');
 const displayMap = require('./mapbox');
 const updateData = require('./updateSettings').updateData;
 const updateSettings = require('./updateSettings').updateSettings;
+const { bookTour } = require('./stripe');
 
 // +require('core-js/stable');
 // +require('regenerator-runtime/runtime');
@@ -13,6 +14,7 @@ const loginForm = document.querySelector('.form--login');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const bookBtn = document.getElementById('book-tour');
 
 // DELEGATIONS
 if (mapBox) {
@@ -69,5 +71,13 @@ if (userPasswordForm) {
     document.getElementById('password-current').value = '';
     document.getElementById('password').value = '';
     document.getElementById('password-confirm').value = '';
+  });
+}
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
   });
 }
