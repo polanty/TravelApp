@@ -9,6 +9,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRoute = require('./routes/viewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 
 //Security packages
 const helmet = require('helmet');
@@ -151,6 +152,8 @@ app.use('/api/v1/users', userRouter);
 
 //Routes to the Reviews
 app.use('/api/v1/reviews', reviewRouter);
+
+app.use('/api/v1/bookings', bookingRouter);
 
 //Handles all unhandled routes
 app.all('*', (req, res, next) => {

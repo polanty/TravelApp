@@ -4,7 +4,8 @@ const displayMap = require('./mapbox');
 const updateData = require('./updateSettings').updateData;
 const updateSettings = require('./updateSettings').updateSettings;
 
-require('@babel/polyfill');
+// +require('core-js/stable');
+// +require('regenerator-runtime/runtime');
 
 //DOM ELEMENTS
 const mapBox = document.getElementById('map');
