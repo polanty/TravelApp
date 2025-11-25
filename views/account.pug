@@ -8,12 +8,12 @@ mixin navItem(link,text, icon, active)
       | #{text}
 
 block content
-  main.main
+  main.mainx
     .user-view
       nav.user-view__menu
         ul.side-nav
           +navItem('#', 'settings', 'settings', true)
-          +navItem('#', 'My bookings', 'briefcase')
+          +navItem('/my-tours ', 'My bookings', 'briefcase')
           +navItem('#', 'My reviews', 'star')
           +navItem('#', 'Billing', 'credit-card')
         
@@ -21,7 +21,7 @@ block content
         .admin-nav
           h5.admin-nav__heading Admin
           ul.side-nav
-            +navItem('#', 'Manage tours', 'map')
+            +navItem('#', 'Manage tours', 'map') 
             +navItem('#', 'Manage users', 'users')
             +navItem('#', 'Manage reviews', 'star')
             +navItem('#', 'Manage bookings', 'briefcase')
