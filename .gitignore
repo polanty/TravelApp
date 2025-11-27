@@ -7,6 +7,9 @@ node_modules/
 # Ignore build output
 dist/
 build/
+# Ignore log files
+logs/
+.cache/
 
 # Ignore OS/system files
 .DS_Store

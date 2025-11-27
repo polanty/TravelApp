@@ -1,6 +1,4 @@
 const moongoose = require('mongoose');
-const Tour = require('./tourModel');
-const User = require('./userModel');
 
 const bookingSchema = new moongoose.Schema({
   tour: {

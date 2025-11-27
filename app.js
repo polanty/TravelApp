@@ -17,8 +17,11 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const app = express();
+
+app.enable('trust proxy');
 
 //template engine for front end rendering
 app.set('view engine', 'pug');
@@ -113,6 +116,8 @@ app.use(
     ],
   }),
 );
+
+app.use(compression());
 
 //app.use(express.static(`${__dirname}/public`)); //Serving static files
 app.use(express.static(path.join(__dirname, 'public'))); //Serving static files
